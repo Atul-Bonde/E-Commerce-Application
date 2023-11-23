@@ -32,6 +32,13 @@ public class GolbalExceptionHandler {
 
     }
 
+    @ExceptionHandler(BadApiRequest.class)
+    public ResponseEntity<ApiResponseMessage> badApiRequestHandler(BadApiRequest b){
+
+        ApiResponseMessage api = ApiResponseMessage.builder().message(b.getMessage()).status(false).httpStatus(HttpStatus.BAD_REQUEST).build();
+
+        return new ResponseEntity<>(api,HttpStatus.BAD_REQUEST);
+    }
 
 
 }

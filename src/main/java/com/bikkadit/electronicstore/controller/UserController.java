@@ -4,32 +4,43 @@ import com.bikkadit.electronicstore.constants.AppConstant;
 import com.bikkadit.electronicstore.constants.UrlConstant;
 import com.bikkadit.electronicstore.dtos.UserDto;
 import com.bikkadit.electronicstore.payloads.ApiResponseMessage;
+import com.bikkadit.electronicstore.payloads.ImageResponse;
 import com.bikkadit.electronicstore.payloads.PageableResponse;
+import com.bikkadit.electronicstore.service.FileService;
 import com.bikkadit.electronicstore.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping(UrlConstant.BASE_URL+UrlConstant.USERS_URL)
+@RequestMapping(UrlConstant.BASE_URL + UrlConstant.USERS_URL)
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileService fileService;
+
+    @Value("${user.profile.image.path}")
+    private String path;
+
     // create
 
     /**
-     * @apiNote  save user data
-     * @author Atul
      * @param userDto
      * @return
+     * @apiNote save user data
+     * @author Atul
      * @since 1.0v
      */
     @PostMapping("/")
@@ -49,10 +60,10 @@ public class UserController {
     // update
 
     /**
-     * @author Atul
      * @param userDto
      * @param userId
      * @return
+     * @author Atul
      * @apiNote update user data
      * @since 1.0v
      */
@@ -73,9 +84,9 @@ public class UserController {
     //delete
 
     /**
-     * @author Atul
      * @param userId
      * @return
+     * @author Atul
      * @apiNote Delete user data
      * @since 1.0v
      */
@@ -97,11 +108,11 @@ public class UserController {
     // single
 
     /**
-     * @author Atul
      * @param userId
      * @return UserDto
-     * @since 1.0v
+     * @author Atul
      * @apiNote get user by userId
+     * @since 1.0v
      */
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String userId) {
@@ -118,12 +129,12 @@ public class UserController {
     //get All
 
     /**
-     * @autthor Atul
      * @param pageSize
      * @param pageNumber
      * @param sortBy
      * @param sortDirection
      * @return
+     * @autthor Atul
      * @apiNote Get all users data
      * @since 1.0v
      */
@@ -146,9 +157,9 @@ public class UserController {
     //find by email
 
     /**
-     * @author Atul
      * @param email
      * @return
+     * @author Atul
      * @apiNote get user by user Email
      * @since 1.0v
      */
@@ -167,9 +178,9 @@ public class UserController {
     //search
 
     /**
-     * @author Atul
      * @param keyword
      * @return
+     * @author Atul
      * @apiNote serach user by keyword
      * @since 1.0v
      */
@@ -184,6 +195,22 @@ public class UserController {
 
         return new ResponseEntity<>(userDtos, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/image/{userId}")
+    public ResponseEntity<ImageResponse> uploadImage(@RequestParam MultipartFile image, @PathVariable String userId) throws IOException {
+
+        String imageName = this.fileService.uploadFile(image, path);
+
+        UserDto user = this.userService.getSingleUser(userId);
+
+        user.setImageName(imageName);
+
+        UserDto userDto = this.userService.updateUser(user, userId);
+
+        ImageResponse imageResponse = ImageResponse.builder().message("Image Uploaded Successfully..").imageName(imageName).status(true).httpStatus(HttpStatus.CREATED).build();
+
+        return new ResponseEntity<ImageResponse>(imageResponse, HttpStatus.CREATED);
     }
 
 }
