@@ -12,11 +12,13 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${user.profile.image.path}")
+    private String path;
 
     @Override
     public UserDto saveUser(UserDto userDto) {
@@ -113,6 +118,16 @@ public class UserServiceImpl implements UserService {
         logger.info("Entering dao call for delete user data with userId {} : ",userId);
 
         User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + userId));
+
+        String imageName = user.getImageName();
+
+        String fullpath=path+imageName;
+
+        File imageFile=new File(fullpath);
+
+        if(imageFile.exists()){
+            imageFile.delete();
+        }
 
         this.userRepository.delete(user);
 
