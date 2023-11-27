@@ -8,9 +8,13 @@ public class UrlConstant {
 
     public static final String SORT_BY="name";
 
+    public static final String SORT_BY_CATEGORY="title";
+
     public static final String SORT_DIRECTION="asc";
 
     public static final String BASE_URL="/api";
 
     public static final String USERS_URL="/users";
+
+    public static final String CATEGORY_URL="/categories";
 }
