@@ -206,6 +206,8 @@ public class UserController {
     @PostMapping("/image/{userId}")
     public ResponseEntity<ImageResponse> uploadImage(@RequestParam MultipartFile image, @PathVariable String userId) throws IOException {
 
+        log.info("Entering request for upload image for user with userId : {}",userId);
+
         String imageName = this.fileService.uploadFile(image, path);
 
         UserDto user = this.userService.getSingleUser(userId);
@@ -216,11 +218,15 @@ public class UserController {
 
         ImageResponse imageResponse = ImageResponse.builder().message("Image Uploaded Successfully..").imageName(imageName).status(true).httpStatus(HttpStatus.CREATED).build();
 
+        log.info("Completed request for upload image for user with userId : {}",userId);
+
         return new ResponseEntity<ImageResponse>(imageResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/image/{userId}")
     public void serveImage(@PathVariable String userId, HttpServletResponse response) throws IOException {
+
+        log.info("Entering request for serve image of user with userId : {}",userId);
 
         UserDto userDto = userService.getSingleUser(userId);
 
@@ -229,6 +235,8 @@ public class UserController {
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 
         StreamUtils.copy(resource,response.getOutputStream());
+
+        log.info("Entering request for serve image of user with userId : {}",userId);
 
     }
 }

@@ -8,6 +8,7 @@ import com.bikkadit.electronicstore.payloads.Helper;
 import com.bikkadit.electronicstore.payloads.PageableResponse;
 import com.bikkadit.electronicstore.repository.CategoryRepository;
 import com.bikkadit.electronicstore.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
@@ -29,6 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto saveCategory(CategoryDto categoryDto) {
 
+        log.info("Entering dao for save category data");
+
         Category category = this.modelMapper.map(categoryDto, Category.class);
 
         String categoryId = UUID.randomUUID().toString();
@@ -37,19 +41,27 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category saveCategory = this.categoryRepository.save(category);
 
+        log.info("Completed dao for save category data");
+
         return this.modelMapper.map(saveCategory, CategoryDto.class);
     }
 
     @Override
     public CategoryDto getSingleCategory(String categoryId) {
 
+        log.info("Entering dao category for get category data with categoryId : {}",categoryId);
+
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + categoryId));
+
+        log.info("Completed dao category for get category data with categoryId : {}",categoryId);
 
         return this.modelMapper.map(category, CategoryDto.class);
     }
 
     @Override
     public PageableResponse<CategoryDto> getAllCategory(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+
+        log.info("Entering dao call for get all category data");
 
         Sort sort;
 
@@ -67,11 +79,15 @@ public class CategoryServiceImpl implements CategoryService {
 
         PageableResponse<CategoryDto> CategoriesDto = Helper.getPageableResponse(categoryPage, CategoryDto.class);
 
+        log.info("completed dao call for get all category data");
+
         return CategoriesDto;
     }
 
     @Override
     public CategoryDto updateCategory(CategoryDto categoryDto, String categoryId) {
+
+        log.info("Entering dao call for update category data with categoryId : {}",categoryId);
 
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + categoryId));
         category.setDescription(categoryDto.getDescription());
@@ -80,14 +96,20 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category updateCategory = this.categoryRepository.save(category);
 
+        log.info("Completed dao call for update category data with categoryId : {}",categoryId);
+
         return this.modelMapper.map(updateCategory, CategoryDto.class);
     }
 
     @Override
     public void deleteCategory(String categoryId) {
 
+        log.info("Entering dao call for delete category data with categoryId : {}",categoryId);
+
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND));
 
         this.categoryRepository.delete(category);
+
+        log.info("Completed dao call for delete category data with categoryId : {}",categoryId);
     }
 }

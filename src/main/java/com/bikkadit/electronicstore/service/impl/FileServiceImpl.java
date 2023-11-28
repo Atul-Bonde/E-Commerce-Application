@@ -2,6 +2,7 @@ package com.bikkadit.electronicstore.service.impl;
 
 import com.bikkadit.electronicstore.exception.BadApiRequest;
 import com.bikkadit.electronicstore.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,11 +12,14 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
 
 
     @Override
     public String uploadFile(MultipartFile file, String path) throws IOException {
+
+        log.info("Entering request for upload Image in local system");
 
         String originalFilename = file.getOriginalFilename();
 
@@ -37,7 +41,10 @@ public class FileServiceImpl implements FileService {
             }
             Files.copy(file.getInputStream(), Paths.get(fullPathWithFileName));
 
+            log.info("Completed request for upload Image in local system");
+
             return fileNameWithExtension;
+
 
         } else {
             throw new BadApiRequest(" File with this " + extension + " not allowed.");
@@ -47,9 +54,13 @@ public class FileServiceImpl implements FileService {
     @Override
     public InputStream getResource(String path, String name) throws FileNotFoundException {
 
+        log.info("Entering request for serve the image from local system");
+
         String fullPath = path + File.separator + name;
 
         InputStream inputStream = new FileInputStream(fullPath);
+
+        log.info("Completed request for serve the image from local system");
 
         return inputStream;
     }
