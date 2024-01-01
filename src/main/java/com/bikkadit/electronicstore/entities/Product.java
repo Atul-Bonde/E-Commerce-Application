@@ -2,10 +2,7 @@ package com.bikkadit.electronicstore.entities;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Setter
@@ -43,4 +40,7 @@ public class Product {
 
     @Column(name = "product_stock")
     private boolean stock;
+
+    @ManyToOne
+    private Category category;
 }

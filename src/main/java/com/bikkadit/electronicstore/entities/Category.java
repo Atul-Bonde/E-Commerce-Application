@@ -2,10 +2,8 @@ package com.bikkadit.electronicstore.entities;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,5 +25,8 @@ public class Category {
 
      @Column(name="category_image")
      private String coverImage;
+
+     @OneToMany(mappedBy = "category")
+     private List<Product> products;
 
 }

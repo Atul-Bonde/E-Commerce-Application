@@ -1,11 +1,14 @@
 package com.bikkadit.electronicstore.dtos;
 
 
+import com.bikkadit.electronicstore.entities.Product;
 import com.bikkadit.electronicstore.validate.ImageNameValid;
 import lombok.*;
 
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +29,7 @@ public class CategoryDto {
 
     @ImageNameValid
     private String coverImage;
+
+
+    private List<ProductDto> products;
 }
